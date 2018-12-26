@@ -10,6 +10,7 @@ import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import Data.Monoid
 import Parser (parseQuoteMessage)
+import Parser.Quote (printer)
 
 filepath = "/Users/adrianp/haskell/tsuru/mdf-kospi200.20110216-0 (1).pcap"
 
@@ -18,7 +19,6 @@ packStr'' = encodeUtf8 . T.pack
 
 main :: IO ()
 main = do 
-    runConduitRes (udpSource "127.0.0.1" 15515 500 .| mapC fst 
-                                                    .| mapC (\x -> (x <> (packStr'' "wtf"))) 
-                                                     .| mapC (\x -> (packStr'' (show $ parseQuoteMessage x)))
+    runConduitRes (udpSource "127.0.0.1" 15515 600 .| mapC fst 
+                                                     .| mapC printer
                                                       .| printC)
