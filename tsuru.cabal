@@ -25,6 +25,7 @@ executable tsuru
   other-modules:       Network
                        , Types.Quote
                        , Parser
+                       , Parser.Quote
   build-depends:       base >=4.10 && <4.11
                        , network
                        , binary >= 0.8.5.1
