@@ -11,12 +11,9 @@ import                      Data.ByteString     (ByteString)
 import                      Data.Conduit        (runConduitRes)
 import                      Conduit             ( ConduitM
                                                 , MonadIO
-                                                , await
                                                 , yield
                                                 , mapC
                                                 , liftIO
-                                                , (.|)
-                                                , stdoutC
                                                 )
 
 import          Control.Monad.Trans.Resource    ( MonadResource
@@ -24,7 +21,6 @@ import          Control.Monad.Trans.Resource    ( MonadResource
                                                 )
 
 import          Network.Socket.ByteString       (recvFrom)
-
 
 udpSocket :: String -> PortNumber -> IO Socket
 udpSocket host port = do

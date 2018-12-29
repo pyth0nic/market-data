@@ -19,12 +19,11 @@ executable tsuru
   main-is:             Main.hs
   -- other-modules:       
   -- other-extensions:    
-  --ghc-options:
+  ghc-options:
   --          -Wall
   --          -Werror
+  --            -ddump-splices
   other-modules:       Network
-                       , Types.Quote
-                       , Parser
                        , Parser.Quote
   build-depends:       base >=4.10 && <4.11
                        , network

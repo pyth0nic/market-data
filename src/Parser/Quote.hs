@@ -3,12 +3,16 @@
 
 module Parser.Quote where
 
-import Data.ByteString (ByteString)
-import ParserGen.Gen
-import ParserGen.Repack  -- Needed later on
-import ParserGen.Parser
-import ParserGen.Common
-import qualified ParserGen.Parser as P
+import               Data.ByteString                     (ByteString)
+import               Data.String                         (IsString)
+import               qualified Data.ByteString as B
+import               ParserGen.Gen
+import               ParserGen.Parser
+import               ParserGen.Common
+import               qualified ParserGen.Parser as P
+import Data.List (sortBy)
+import Data.Ord (comparing)
+
 
 newtype IssueCode = IssueCode ByteString deriving (Eq, Show)
 newtype Price = Price Int deriving (Eq, Num, Show)
@@ -49,5 +53,18 @@ marketStatus = do
 $(genDataTypeFromFile "Quote.ths")
 $(genParserFromFile   "Quote.ths")
 
+-- todo more messages
+chooseParserModel :: 
+    (Eq a, Data.String.IsString a) =>
+    a -> Parser Quote
+chooseParserModel t = case t of
+                            "G7034" -> parserForQuotex
+                            _ -> parserForQuotey
+
+-- probably a better way to do this
+sortByTradingTime :: [Quote] -> [Quote]
+sortByTradingTime = sortBy (comparing qTradingTime)
+
+
 printer :: ByteString -> (Either String Quote)
-printer x = parse parserForQuote x
+printer x = parse (chooseParserModel (B.take 5 x)) x
