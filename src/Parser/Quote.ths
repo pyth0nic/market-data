@@ -1,5 +1,20 @@
 Quote
-  Quotex
+  ShortQuote q
+    _Datatype         ByteString   5   "B6034"
+    IssueCode         IssueCode    12
+    _IssueSeq         Int          3
+    _MarketStatusType Int          2   marketStatus
+    _TotalBidVol      Int          7
+    5x BestBids       Position     12  bidOrOfferOpt
+    _TotalAskVol      Int          7
+    5x BestAsks       Position     12  bidOrOfferOpt
+    _NumBidValidTotal Int          5
+    5x NumBestBid     Qty          4
+    _NumAskValidtotal Int          5
+    5x NumBestAsk     Qty          4
+    TradingTime       DiffTime     8   ts8
+    _EOT              ByteString   1   "\255"
+  LongQuote q
     _Datatype         ByteString   5   "G7034"
     IssueCode         IssueCode    12
     _IssueSeq         Int          3
@@ -22,19 +37,4 @@ Quote
     5x NumBestBid     Qty          4
     _NumAskValidtotal Int          5
     5x NumBestAsk     Qty          4
-    _EOT              ByteString   1   "\255"
-  Quotey
-    _Datatype         ByteString   5   "B6034"
-    IssueCode         IssueCode    12
-    _IssueSeq         Int          3
-    _MarketStatusType Int          2   marketStatus
-    _TotalBidVol      Int          7
-    5x BestBids       Position     12  bidOrOfferOpt
-    _TotalAskVol      Int          7
-    5x BestAsks       Position     12  bidOrOfferOpt
-    _NumBidValidTotal Int          5
-    5x NumBestBid     Qty          4
-    _NumAskValidtotal Int          5
-    5x NumBestAsk     Qty          4
-    TradingTime       DiffTime     8   ts8
     _EOT              ByteString   1   "\255"

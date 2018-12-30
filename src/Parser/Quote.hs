@@ -58,13 +58,12 @@ chooseParserModel ::
     (Eq a, Data.String.IsString a) =>
     a -> Parser Quote
 chooseParserModel t = case t of
-                            "G7034" -> parserForQuotex
-                            _ -> parserForQuotey
+                            "G7034" -> parserForLongQuote
+                            _ -> parserForShortQuote
 
--- probably a better way to do this
+-- ensure each quote constructor is followed by 'q' for code generation
 sortByTradingTime :: [Quote] -> [Quote]
 sortByTradingTime = sortBy (comparing qTradingTime)
-
 
 printer :: ByteString -> (Either String Quote)
 printer x = parse (chooseParserModel (B.take 5 x)) x
