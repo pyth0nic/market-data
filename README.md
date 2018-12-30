@@ -1,11 +1,11 @@
 # Market Data Pipeline
 
-A small service that listens to a specified port and runs udp market data through a conduit pipeline, parses and outputs data to the command line or a file. 
+A small and simple service that listens to a specified port and runs udp market data through a conduit pipeline, parses and outputs data to the command line or a file. 
 
 ## Getting Started
 
 #### Build
-This program is dependent on parser-gen 0.2.0.8, as of the time of writing this is not available on hackage. So first we need fetch it from github and add it to our cabal packages.
+This program is dependent on the most excellent parser-gen library version 0.2.0.8, as of the time of writing this is not available on hackage. So first we need fetch it from github and add it to our cabal packages.
 ```
 mkdir packages && cd packages
 git clone https://github.com/tsurucapital/parsergen.git
@@ -84,6 +84,7 @@ Quote Packet Specification
 
 #### Todo and future interests
     - Testing
+    - Dockerise
     - Add Kafka sinks
     - Create an analysis service
 
