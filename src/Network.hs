@@ -8,11 +8,9 @@ import                      Network.Socket      ( Socket
                                                 )
 
 import                      Data.ByteString     (ByteString)
-import                      Data.Conduit        (runConduitRes)
 import                      Conduit             ( ConduitM
                                                 , MonadIO
                                                 , yield
-                                                , mapC
                                                 , liftIO
                                                 )
 

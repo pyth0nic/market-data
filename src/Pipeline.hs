@@ -1,13 +1,10 @@
 module Pipeline where
     
 import           Network
-import           Data.Monoid
 import           Network.Socket                    (PortNumber)
 import           Data.Conduit                      (runConduitRes)
 import           Data.Conduit.List                 (chunksOf)
-import           Data.Conduit.Combinators          (iterM, yieldMany)
 import           Conduit
-import           Data.Time                         (getCurrentTime)
 import           Data.Text.Encoding                (encodeUtf8)
 import           Parser.Quote                      (printer
                                                    ,sortByTradingTime

@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -fno-cse #-}
 
 module Main where
-import System.Console.CmdArgs excluding (args)
+import System.Console.CmdArgs
 import Pipeline (runUdpQuotePipeline) 
 
 data MarketDataProgram = MarketDataProgram { reorder :: Bool,

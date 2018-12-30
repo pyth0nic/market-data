@@ -12,7 +12,7 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
-executable tsuru
+executable market-data
   main-is:             Main.hs
   ghc-options:
             -Wall

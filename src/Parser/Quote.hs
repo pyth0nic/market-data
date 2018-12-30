@@ -9,7 +9,6 @@ import               qualified Data.ByteString as B
 import               ParserGen.Gen
 import               ParserGen.Parser
 import               ParserGen.Common
-import               qualified ParserGen.Parser as P
 import Data.List (sortBy)
 import Data.Ord (comparing)
 
