@@ -11,6 +11,7 @@ import           Parser.Quote                      (printer
                                                    ,Quote(..))
 import qualified Data.ByteString                   as B
 import qualified Data.Text                         as T
+import Config
 
 packStr' :: String -> B.ByteString
 packStr' = encodeUtf8 . T.pack
@@ -23,11 +24,11 @@ right :: Either l r -> Maybe r
 right = either (const Nothing) Just
 
 parseResultSplitter :: Monad m => Bool -> ConduitT (Either String Quote) (Either B.ByteString B.ByteString) m ()
-parseResultSplitter reorder = getZipConduit
+parseResultSplitter reorder' = getZipConduit
     $ ZipConduit (concatMapC left .| mapC (\x -> packStr' $ (show x) ++ "\n") -- todo add raw data to error message
                                      .| mapC Left)
 
-   *> ZipConduit (concatMapC right .| maybeSortAndPrint reorder .| mapC Right)
+   *> ZipConduit (concatMapC right .| maybeSortAndPrint reorder' .| mapC Right)
 
 maybeSortAndPrint :: Monad m => Bool -> ConduitT Quote B.ByteString m ()
 maybeSortAndPrint True  = sortAndPrint 
@@ -47,16 +48,28 @@ showToFile = getZipConduit
                *> ZipConduit (concatMapC right .| sinkFile "results.txt")
 
 toFilePipeline :: Bool -> ConduitM (B.ByteString, b) Void (ResourceT IO) ()
-toFilePipeline reorder = mapC fst
-                    .| mapC printer
-                        .| parseResultSplitter reorder
-                            .| showToFile
+toFilePipeline reorder' = mapC fst
+                            .| mapC printer
+                                .| parseResultSplitter reorder'
+                                    .| showToFile
+
+toCmdPipeline :: Bool -> ConduitM (B.ByteString, b) Void (ResourceT IO) ()
+toCmdPipeline reorder' = mapC fst
+                            .| mapC printer
+                                .| parseResultSplitter reorder'
+                                   .| printC
 
 -- todo toKafkaPipeline
 
 portNumber :: Integer -> PortNumber
 portNumber port = read (show port) :: PortNumber
 
-runUdpQuotePipeline :: String -> Integer -> Bool -> IO ()
-runUdpQuotePipeline addr port reorder = do
-                                  runConduitRes $ udpSource addr (portNumber port) 500 .| toFilePipeline reorder
+runUdpQuotePipeline :: MarketDataConfig -> IO ()
+runUdpQuotePipeline config = do 
+                                case (fileOutput config) of
+                                    True  -> runConduitRes $ udpSource addr port 500 .| toFilePipeline reorder'
+                                    False -> runConduitRes $ udpSource addr port 500 .| toCmdPipeline reorder'
+                                  where
+                                    addr = hostAddress config
+                                    port = portNumber $ hostPort config
+                                    reorder' = reorder config

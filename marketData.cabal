@@ -21,6 +21,7 @@ executable market-data
   other-modules:         Network
                        , Parser.Quote
                        , Pipeline
+                       , Config
   build-depends:       base >=4.10 && <4.11
                        , network
                        , binary >= 0.8.5.1
