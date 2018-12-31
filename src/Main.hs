@@ -25,5 +25,11 @@ main :: IO ()
 main = do
         putStrLn "Greetings, to get more info on this program and its arguments pass the -? | --help flag on run."
         config <- getConfig
-        print config
-        runUdpQuotePipeline config
+        valid <- validConfig config
+        case valid of
+                False -> putStrLn "Invalid arguments passed, please try again."
+                True -> do
+                           print config
+                           -- most pipeline errors are handle with an either 
+                           -- TODO add error handling for network issues
+                           runUdpQuotePipeline config
