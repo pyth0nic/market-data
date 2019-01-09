@@ -2,13 +2,15 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MonoLocalBinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Config where
 
 import            System.Console.CmdArgs
 import            Data.IP                     (IP)
-import Control.Monad                          (liftM)
-import Control.Exception
+import Text.Read
+import Data.Maybe (isJust)
+import Control.Monad (guard)
 
 data MarketDataConfig = MarketDataConfig { 
                                           reorder :: Bool,
@@ -18,25 +20,15 @@ data MarketDataConfig = MarketDataConfig {
                                          }
                         deriving (Show, Data, Typeable)
 
-tryParseIpAddress :: Read IP => String -> IO IP
-tryParseIpAddress ip = readIO ip
+readIpAddress :: String -> Maybe IP
+readIpAddress ip = readMaybe ip :: Maybe IP
 
 validateHostPort :: Integer -> Bool
 validateHostPort port | port <= 65535 && port > 0 = True
                       | otherwise                 = False
 
--- TODO This is ugly use an error type to keep track of program errors
-validConfig :: MarketDataConfig -> IO (Bool)
-validConfig config = do
-                        let port = validateHostPort $ hostPort config
-                        case port of
-                          False -> pure False
-                          True  -> do
-                                    addr <- catch (Right `liftM` (tryParseIpAddress $ hostAddress config))
-                                                  (\(e :: IOError) -> do putStrLn $ show e
-                                                                         pure $ Left e)
-                                    case addr of
-                                      Left _ -> do 
-                                                  putStrLn "IP Address parse error"
-                                                  pure False
-                                      Right _ -> pure True
+validConfig :: MarketDataConfig -> Bool
+validConfig config = isJust $ do
+  _ <- readMaybe @IP (hostAddress config)
+  guard (hostPort config <= 65535 && hostPort config > 0)  
+

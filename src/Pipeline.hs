@@ -1,7 +1,6 @@
 module Pipeline where
     
 import           Network
-import           Network.Socket                    (PortNumber)
 import           Data.Conduit                      (runConduitRes)
 import           Data.Conduit.List                 (chunksOf)
 import           Conduit
@@ -59,11 +58,6 @@ toCmdPipeline reorder' = mapC fst
                                 .| parseResultSplitter reorder'
                                    .| printC
 
--- todo toKafkaPipeline
-
-portNumber :: Integer -> PortNumber
-portNumber port = read (show port) :: PortNumber
-
 runUdpQuotePipeline :: MarketDataConfig -> IO ()
 runUdpQuotePipeline config = do 
                                 case (fileOutput config) of
@@ -71,5 +65,5 @@ runUdpQuotePipeline config = do
                                     False -> runConduitRes $ udpSource addr port 500 .| toCmdPipeline reorder'
                                   where
                                     addr = hostAddress config
-                                    port = portNumber $ hostPort config
+                                    port = fromInteger $ hostPort config
                                     reorder' = reorder config
