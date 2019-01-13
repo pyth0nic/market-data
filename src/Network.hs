@@ -1,24 +1,13 @@
 module Network where
 
-import    qualified Network.Socket as Socket
-import                      Network.Socket      ( Socket
-                                                , SockAddr(SockAddrInet)
-                                                , PortNumber
-                                                , setSocketOption
-                                                )
-
-import                      Data.ByteString     (ByteString)
-import                      Conduit             ( ConduitM
-                                                , MonadIO
-                                                , yield
-                                                , liftIO
-                                                )
-
-import          Control.Monad.Trans.Resource    ( MonadResource
-                                                , allocate
-                                                )
-
-import          Network.Socket.ByteString       (recvFrom)
+import           Network.Socket               (PortNumber,
+                                               SockAddr (SockAddrInet), Socket,
+                                               setSocketOption)
+import qualified Network.Socket               as Socket
+import           Conduit                      (ConduitM, MonadIO, liftIO, yield)
+import           Data.ByteString              (ByteString)
+import           Control.Monad.Trans.Resource (MonadResource, allocate)
+import           Network.Socket.ByteString    (recvFrom)
 
 udpSocket :: String -> PortNumber -> IO Socket
 udpSocket host port = do
@@ -29,7 +18,7 @@ udpSocket host port = do
                     pure socket
 
 sourceIOSocket :: MonadResource m
-               => IO Socket                                     
+               => IO Socket
                -> Int
                -> ConduitM i (ByteString, SockAddr) m ()
 sourceIOSocket bindAction sz = do
@@ -45,8 +34,8 @@ sourceSocket s sz = do
   yield msg
   sourceSocket s sz
 
-udpSource :: (MonadResource m) => String                                   
-    -> PortNumber                               
+udpSource :: (MonadResource m) => String
+    -> PortNumber
     -> Int
     -> ConduitM i (ByteString, SockAddr) m ()
 udpSource host port sz =

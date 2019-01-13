@@ -17,11 +17,13 @@ executable market-data
   ghc-options:
             -Wall
             -Werror
+            -threaded
   --          -ddump-splices
   other-modules:         Network
                        , Parser.Quote
                        , Pipeline
                        , Config
+                       , FileCombinator
   build-depends:       base >=4.11 && <5
                        , network == 2.6.3.2
                        , binary >= 0.8.5.1

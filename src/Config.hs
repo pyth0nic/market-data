@@ -1,27 +1,25 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MonoLocalBinds #-}
+{-# LANGUAGE DeriveDataTypeable  #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE MonoLocalBinds      #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeApplications    #-}
 
 module Config where
 
-import            System.Console.CmdArgs
-import            Data.IP                     (IP)
-import Text.Read
-import Data.Maybe (isJust)
-import Control.Monad (guard)
+import           Control.Monad          (guard)
+import           Data.IP                (IP)
+import           Data.Maybe             (isJust)
+import           System.Console.CmdArgs
+import           Text.Read
 
-data MarketDataConfig = MarketDataConfig { 
-                                          reorder :: Bool,
-                                          fileOutput :: Bool,
-                                          hostAddress :: String, 
-                                          hostPort :: Integer
+data MarketDataConfig = MarketDataConfig {
+                                          reorder       :: Bool,
+                                          fileOutput    :: Bool,
+                                          fileInputPath :: FilePath,
+                                          hostAddress   :: String,
+                                          hostPort      :: Integer
                                          }
                         deriving (Show, Data, Typeable)
-
-readIpAddress :: String -> Maybe IP
-readIpAddress ip = readMaybe ip :: Maybe IP
 
 validateHostPort :: Integer -> Bool
 validateHostPort port | port <= 65535 && port > 0 = True
@@ -30,5 +28,5 @@ validateHostPort port | port <= 65535 && port > 0 = True
 validConfig :: MarketDataConfig -> Bool
 validConfig config = isJust $ do
   _ <- readMaybe @IP (hostAddress config)
-  guard (hostPort config <= 65535 && hostPort config > 0)  
+  guard (hostPort config <= 65535 && hostPort config > 0)
 
