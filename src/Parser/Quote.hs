@@ -1,16 +1,17 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell  #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE TemplateHaskell            #-}
 
 module Parser.Quote where
 
-import               Data.ByteString                     (ByteString)
-import               Data.String                         (IsString)
-import               qualified Data.ByteString as B
-import               ParserGen.Gen
-import               ParserGen.Parser
-import               ParserGen.Common
-import Data.List (sortBy)
-import Data.Ord (comparing)
+import           Data.ByteString  (ByteString)
+import qualified Data.ByteString  as B
+import           Data.List        (sortBy)
+import           Data.Ord         (comparing)
+import           Data.String      (IsString)
+import           ParserGen.Common
+import           ParserGen.Gen
+import           ParserGen.Parser
 
 
 newtype IssueCode = IssueCode ByteString deriving (Eq, Show)
@@ -53,16 +54,19 @@ $(genDataTypeFromFile "Quote.ths")
 $(genParserFromFile   "Quote.ths")
 
 -- todo more messages
-chooseParserModel :: 
+chooseParserModel ::
     (Eq a, Data.String.IsString a) =>
-    a -> Parser Quote
+    a -> Either a (Parser Quote)
 chooseParserModel t = case t of
-                            "G7034" -> parserForLongQuote
-                            _ -> parserForShortQuote
+                            "G7034" -> Right parserForLongQuote
+                            "B6034" -> Right parserForShortQuote
+                            _ -> Left t
 
 -- ensure each quote constructor is followed by 'q' for code generation
 sortByTradingTime :: [Quote] -> [Quote]
 sortByTradingTime = sortBy (comparing qTradingTime)
 
-printer :: ByteString -> (Either String Quote)
-printer x = parse (chooseParserModel (B.take 5 x)) x
+parseQuote :: ByteString -> (Either String Quote)
+parseQuote x = case (chooseParserModel (B.take 5 x)) of
+                Left s -> Left $ "No parser for packet found for " ++ (show s)
+                Right p -> parse p x

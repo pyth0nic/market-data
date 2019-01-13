@@ -10,7 +10,7 @@ import qualified Data.Text           as T
 import           Data.Text.Encoding  (encodeUtf8)
 import           FileCombinator
 import           Network
-import           Parser.Quote        (Quote (..), printer, sortByTradingTime)
+import           Parser.Quote        (Quote (..), parseQuote, sortByTradingTime)
 
 packStr' :: String -> B.ByteString
 packStr' = encodeUtf8 . T.pack
@@ -47,12 +47,12 @@ showToFile = getZipConduit
                *> ZipConduit (concatMapC right .| sinkFile "results.txt")
 
 toFilePipeline :: Bool -> ConduitM B.ByteString Void (ResourceT IO) ()
-toFilePipeline reorder' = mapC printer
+toFilePipeline reorder' = mapC parseQuote
                                 .| parseResultSplitter reorder'
                                     .| showToFile
 
 toCmdPipeline :: MonadIO m => Bool -> ConduitM B.ByteString c m ()
-toCmdPipeline reorder' = mapC printer
+toCmdPipeline reorder' = mapC parseQuote
                                 .| parseResultSplitter reorder'
                                    .| printC
 
